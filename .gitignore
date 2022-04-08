@@ -5,4 +5,6 @@ dist
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
-*code-workspace
+*.code-workspace
+config.json
+node_modules
