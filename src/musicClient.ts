@@ -20,17 +20,6 @@ import Deezer from 'erela.js-deezer';
 const globPromise = promisify(glob);
 
 declare module 'discord.js' {
-	export interface Client {
-		config: typeof config;
-		commands: Collection<unknown, Command>;
-		manager: Manager;
-		consola: typeof consola;
-		events: Collection<unknown, Event>;
-		musicEvents: Collection<unknown, Event>;
-		shardEvents: Collection<unknown, Event>;
-		aliases: Collection<string, string>;
-	}
-
 	export interface Command {
 		name: string;
 		description: string;
@@ -88,6 +77,16 @@ Structure.extend(
 );
 
 export default class guineabotClient extends Client {
+	public config: typeof config;
+	public commands: Collection<string, Command>;
+	public events: Collection<string, Event>;
+	public musicEvents: Collection<string, Event>;
+	public shardEvents: Collection<string, Event>;
+	public aliases: Collection<string, string>;
+	public consola: typeof consola;
+	public manager: Manager;
+	
+	
 	constructor(options: ClientOptions) {
 		super(options);
 		this.config = config;
@@ -127,14 +126,7 @@ export default class guineabotClient extends Client {
 		});
 	}
 
-	public config: typeof config;
-	public commands: Collection<string, Command>;
-	public events: Collection<string, Event>;
-	public musicEvents: Collection<string, Event>;
-	public shardEvents: Collection<string, Event>;
-	public aliases: Collection<string, string>;
-	public consola: typeof consola;
-	public manager: Manager;
+	
 
 	public async loadCommands(): Promise<void> {
 		const commandFiles = await globPromise(`${__dirname}/commands/**/*.ts`);
