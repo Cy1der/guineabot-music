@@ -1,12 +1,10 @@
 import {
 	Client,
-	Intents,
 	Collection,
 	MessageEmbed,
-	Message,
+	MessageEmbedOptions,
 	ClientOptions,
-	Command,
-	Event,
+	MessageInteraction,
 } from 'discord.js';
 import { promisify } from 'util';
 import consola from 'consola';
@@ -16,37 +14,11 @@ import config from '../config.json';
 import { Manager, Structure } from 'erela.js';
 import Spotify from 'erela.js-spotify';
 import Deezer from 'erela.js-deezer';
+import type Command from "./types/command";
+import type Event from "./types/event";
+import type consolatypes from "./types/consolatypes";
 
 const globPromise = promisify(glob);
-
-declare module 'discord.js' {
-	export interface Client {
-		config: typeof config;
-		commands: Collection<unknown, Command>;
-		manager: Manager;
-		consola: typeof consola;
-		events: Collection<unknown, Event>;
-		musicEvents: Collection<unknown, Event>;
-		shardEvents: Collection<unknown, Event>;
-		aliases: Collection<string, string>;
-	}
-
-	export interface Command {
-		name: string;
-		description: string;
-		aliases?: string[];
-		cooldown?: number;
-		ownerOnly?: boolean;
-		userPermissions?: string[];
-		botPermissions?: string[];
-		execute: (message: Message, args: string[]) => Promise<any>;
-	}
-
-	export interface Event {
-		name: string;
-		execute: (client: Client, data: any) => void;
-	}
-}
 
 Structure.extend(
 	'Queue',
@@ -88,13 +60,20 @@ Structure.extend(
 );
 
 export default class guineabotClient extends Client {
+	public config: typeof config;
+	public commands: Collection<string, Command>;
+	public events: Collection<string, Event>;
+	public musicEvents: Collection<string, Event>;
+	public aliases: Collection<string, string>;
+	public consola: typeof consola;
+	public manager: Manager;
+
 	constructor(options: ClientOptions) {
 		super(options);
 		this.config = config;
 		this.commands = new Collection();
 		this.events = new Collection();
 		this.musicEvents = new Collection();
-		this.shardEvents = new Collection();
 		this.aliases = new Collection();
 		this.consola = consola;
 		this.manager = new Manager({
@@ -127,19 +106,13 @@ export default class guineabotClient extends Client {
 		});
 	}
 
-	public config: typeof config;
-	public commands: Collection<string, Command>;
-	public events: Collection<string, Event>;
-	public musicEvents: Collection<string, Event>;
-	public shardEvents: Collection<string, Event>;
-	public aliases: Collection<string, string>;
-	public consola: typeof consola;
-	public manager: Manager;
-
 	public async loadCommands(): Promise<void> {
 		const commandFiles = await globPromise(`${__dirname}/commands/**/*.ts`);
 
-		this.consola.success(`[BOT] > ${commandFiles.length} commands loaded`);
+		this.log({
+			level: 'info',
+			content: `Loaded ${commandFiles.length} commands`,
+		});
 
 		commandFiles.map((command) => {
 			const file = require(command);
@@ -154,31 +127,45 @@ export default class guineabotClient extends Client {
 	}
 
 	public async loadEvents(): Promise<void> {
-		const eventFiles = await globPromise(`${__dirname}/events/**/*.ts`);
+		const eventFiles = await globPromise(`${__dirname}/events/discord/**/*.ts`);
 		const musicEventFiles = await globPromise(
-			`${__dirname}/musicevents/**/*.ts`
+			`${__dirname}/events/music/**/*.ts`
 		);
-		const shardFiles = await globPromise(`${__dirname}/shardevents/**/*.ts`);
 
-		this.consola.success(`[BOT] > ${eventFiles.length} events loaded`);
-		this.consola.success(`[BOT] > ${musicEventFiles.length} events loaded`);
-		this.consola.success(`[BOT] > ${shardFiles.length} events loaded`);
+		this.log({
+			level: "info",
+			content: `${eventFiles.length} events loaded`,
+		});
+		this.log({
+			level: "info",
+			content: `${musicEventFiles.length} music events loaded`,
+		});
 
 		eventFiles.map((event) => {
 			const file = require(event);
 			this.events.set(file.name, file);
-			this.on(file.name, file.execute.bind(null, this));
+			this.on(file.name, file.exportData.execute.bind(null, this));
 		});
 		musicEventFiles.map((event) => {
 			const file = require(event);
 			this.musicEvents.set(file.name, file);
-			this.on(file.name, file.execute.bind(null, this));
+			this.on(file.name, file.exportData.execute.bind(null, this));
 		});
-		shardFiles.map((event) => {
-			const file = require(event);
-			this.shardEvents.set(file.name, file);
-			this.on(file.name, file.execute.bind(null, this));
-		});
+	}
+
+	public embed(options: MessageEmbedOptions, interaction: MessageInteraction): MessageEmbed {
+		return new MessageEmbed({ color: "RANDOM", footer: {
+			text: `${interaction.user.tag} | ${interaction.user.id}`,
+			iconURL: interaction.user.displayAvatarURL({ 
+				dynamic: true,
+				format: 'png',
+			})
+		}, ...options })
+		.setTimestamp();
+	}
+
+	public log(options: consolatypes): void {
+		this.consola[`${options.level}`](`[BOT] > ${options.content}`);
 	}
 
 	public connect(): void {
