@@ -3,7 +3,7 @@ import type { Track, UnresolvedTrack } from 'erela.js';
 export default function validateNumbers(
 	where: number,
 	to: number,
-	queue: Array<Track | UnresolvedTrack>
+	queue: (Track | UnresolvedTrack)[]
 ) {
 	if (typeof where !== 'number')
 		throw new TypeError('[BOT] > from must be a number');

@@ -45,6 +45,10 @@ const client = new guineabotClient({
 			client.log({
 				level: 'info',
 				content: `Loaded ${count} commands`,
+			}),
+			(reason: string) => client.log({
+				level: 'error',
+				content: `Failed to load commands: ${reason}`,
 			})
 		)
 		.catch((e) => client.log({ level: 'fatal', content: e }));
@@ -58,7 +62,11 @@ const client = new guineabotClient({
 			client.log({
 				level: 'info',
 				content: `${count[1]} events loaded`,
-			});
+			}),
+			(reason: string) => client.log({
+				level: 'error',
+				content: `Failed to load events: ${reason}`,
+			})
 		})
 		.catch((e) => client.log({ level: 'fatal', content: e }));
 })();
