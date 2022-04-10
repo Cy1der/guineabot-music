@@ -35,21 +35,24 @@ const client = new guineabotClient({
 		Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
 		Intents.FLAGS.GUILD_PRESENCES,
 		Intents.FLAGS.GUILD_VOICE_STATES,
+		Intents.FLAGS.GUILD_MEMBERS
 	],
 });
 
 (async () => {
 	await client
 		.loadCommands()
-		.then((count) =>
-			client.log({
-				level: 'info',
-				content: `Loaded ${count} commands`,
-			}),
-			(reason: string) => client.log({
-				level: 'error',
-				content: `Failed to load commands: ${reason}`,
-			})
+		.then(
+			(count) =>
+				client.log({
+					level: 'info',
+					content: `Loaded ${count} commands`,
+				}),
+			(reason: string) =>
+				client.log({
+					level: 'error',
+					content: `Failed to load commands: ${reason}`,
+				})
 		)
 		.catch((e) => client.log({ level: 'fatal', content: e }));
 	await client
@@ -57,16 +60,17 @@ const client = new guineabotClient({
 		.then((count) => {
 			client.log({
 				level: 'info',
-				content: `${count[0]} events loaded`,
+				content: `${count[0]} Discord events loaded`,
 			});
 			client.log({
 				level: 'info',
-				content: `${count[1]} events loaded`,
+				content: `${count[1]} music events loaded`,
 			}),
-			(reason: string) => client.log({
-				level: 'error',
-				content: `Failed to load events: ${reason}`,
-			})
+				(reason: string) =>
+					client.log({
+						level: 'error',
+						content: `Failed to load events: ${reason}`,
+					});
 		})
 		.catch((e) => client.log({ level: 'fatal', content: e }));
 })();

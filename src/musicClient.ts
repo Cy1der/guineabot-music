@@ -53,8 +53,25 @@ export default class guineabotClient extends Client {
 					host: config.lavalink.server,
 					password: config.lavalink.password,
 					port: config.lavalink.port,
+					secure: config.lavalink.secure,
 					retryDelay: 1000,
-					identifier: 'Guineabot-Music',
+					identifier: 'gm-node-1',
+				},
+				{
+					host: config.lavalink.server,
+					password: config.lavalink.password,
+					port: config.lavalink.port,
+					secure: config.lavalink.secure,
+					retryDelay: 1000,
+					identifier: 'gm-node-2',
+				},
+				{
+					host: config.lavalink.server,
+					password: config.lavalink.password,
+					port: config.lavalink.port,
+					secure: config.lavalink.secure,
+					retryDelay: 1000,
+					identifier: 'gm-node-3',
 				},
 			],
 			send(id: string, payload: Payload) {
@@ -94,10 +111,11 @@ export default class guineabotClient extends Client {
 			this.events.set(file.name, file);
 			this.on(file.name, file.execute.bind(null, this));
 		});
+
 		musicEventFiles.map((event) => {
 			const file = require(event);
 			this.musicEvents.set(file.name, file);
-			this.on(file.name, file.execute.bind(null, this));
+			this.manager.on(file.name, file.execute.bind(null, this));
 		});
 
 		return [eventFiles.length, musicEventFiles.length];

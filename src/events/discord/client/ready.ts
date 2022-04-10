@@ -17,9 +17,18 @@ export const execute = async (client: guineabotClient) => {
 	setInterval(() => setPresence(client), ms('15m'));
 
 	const commands: ApplicationCommandManager = client.application?.commands;
+	const testingServer = client.guilds.cache.get(
+		client.config.testing_server_id
+	);
 
 	if (commands) {
 		for (const command of client.commands) {
+			await testingServer.commands.create({
+				name: command[1].name,
+				description: command[1].description,
+				options: command[1].options,
+			});
+
 			await commands.create({
 				name: command[1].name,
 				description: command[1].description,

@@ -7,6 +7,7 @@ export const execute = async (
 	interaction: CommandInteraction
 ) => {
 	if (!interaction.isCommand()) return;
+	if (!interaction.inCachedGuild()) return;
 
 	const command = client.commands.get(interaction.commandName);
 	if (!command)

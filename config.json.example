@@ -2,9 +2,11 @@
 	"bot_token": "",
 	"spotify_client_id": "",
 	"spotify_client_secret": "",
+	"testing_server_id": "",
 	"lavalink": {
 		"server": "",
-		"port": 80,
-		"password": ""
+		"port": 0,
+		"password": "",
+		"secure": true
 	}
 }
