@@ -8,5 +8,8 @@ export default interface Command {
 	userPermissions?: string[];
 	botPermissions?: string[];
 	options?: ApplicationCommandNonOptions[];
-	execute: (client: guineabotClient, interaction: CommandInteraction) => Promise<any>;
+	execute: (
+		client: guineabotClient,
+		interaction: CommandInteraction
+	) => Promise<void>;
 }

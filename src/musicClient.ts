@@ -10,53 +10,14 @@ import { promisify } from 'util';
 import consola from 'consola';
 import glob from 'glob';
 import config from '../config.json';
-import { Manager, Payload, Structure } from 'erela.js';
+import { Manager, Payload } from 'erela.js';
 import Spotify from 'erela.js-spotify';
 import Deezer from 'erela.js-deezer';
-import type Command from "./types/command";
-import type Event from "./types/event";
-import type consolatypes from "./types/consolatypes";
+import type Command from './types/command';
+import type Event from './types/event';
+import type consolatypes from './types/consolatypes';
 
 const globPromise = promisify(glob);
-
-Structure.extend(
-	'Queue',
-	(Queue) =>
-		class extends Queue {
-			swap(where: number, to: number): void {
-				if (typeof where !== 'number')
-					throw new TypeError('[BOT] > from must be a number');
-				if (typeof to !== 'number')
-					throw new TypeError('[BOT] > to must be a number');
-				if (where < 1 || to < 1 || where > this.length || to > this.length)
-					throw new Error(
-						`[BOT] > from/to must be between 1 and ${this.length}`
-					);
-				const fromPosition = this[where - 1];
-				const toPosition = this[to - 1];
-				this[where - 1] = toPosition;
-				this[to - 1] = fromPosition;
-			}
-			move(where: number, to: number): void {
-				if (typeof where !== 'number')
-					throw new TypeError('[BOT] > from must be a number');
-				if (typeof to !== 'number')
-					throw new TypeError('[BOT] > to must be a number');
-				if (where < 1 || to < 1 || where > this.length || to > this.length)
-					throw new Error(
-						`[BOT] > from/to must be between 1 and ${this.length}`
-					);
-				const fromPosition = this[where - 1];
-				const toPosition = this[to - 1];
-				this[to - 1] = fromPosition;
-				this.remove(where - 1);
-				for (let i = to; i < this.length; i += 1) {
-					i === to ? (this[i - 1] = toPosition) : (this[i - 1] = this[i]);
-				}
-				this[to] = toPosition;
-			}
-		}
-);
 
 export default class guineabotClient extends Client {
 	public config: typeof config;
@@ -103,13 +64,10 @@ export default class guineabotClient extends Client {
 		});
 	}
 
-	public async loadCommands(): Promise<void> {
-		const commandFiles = await globPromise(`${__dirname}/commands/**/{*.ts,*.js}`);
-
-		this.log({
-			level: 'info',
-			content: `Loaded ${commandFiles.length} commands`,
-		});
+	public async loadCommands(): Promise<number> {
+		const commandFiles = await globPromise(
+			`${__dirname}/commands/**/{*.ts,*.js}`
+		);
 
 		commandFiles.map((command) => {
 			const file = require(command);
@@ -119,22 +77,17 @@ export default class guineabotClient extends Client {
 			if (!file.botPermissions) file.botPermissions = [];
 			if (!file.options) file.options = [];
 		});
+
+		return commandFiles.length;
 	}
 
-	public async loadEvents(): Promise<void> {
-		const eventFiles = await globPromise(`${__dirname}/events/discord/**/{*.ts,*.js}`);
+	public async loadEvents(): Promise<number[]> {
+		const eventFiles = await globPromise(
+			`${__dirname}/events/discord/**/{*.ts,*.js}`
+		);
 		const musicEventFiles = await globPromise(
 			`${__dirname}/events/music/**/{*.ts,*.js}`
 		);
-
-		this.log({
-			level: "info",
-			content: `${eventFiles.length} events loaded`,
-		});
-		this.log({
-			level: "info",
-			content: `${musicEventFiles.length} music events loaded`,
-		});
 
 		eventFiles.map((event) => {
 			const file = require(event);
@@ -146,17 +99,25 @@ export default class guineabotClient extends Client {
 			this.musicEvents.set(file.name, file);
 			this.on(file.name, file.execute.bind(null, this));
 		});
+
+		return [eventFiles.length, musicEventFiles.length];
 	}
 
-	public embed(options: MessageEmbedOptions, interaction: MessageInteraction): MessageEmbed {
-		return new MessageEmbed({ color: "RANDOM", footer: {
-			text: `${interaction.user.tag}`,
-			iconURL: interaction.user.displayAvatarURL({ 
-				dynamic: true,
-				format: 'png',
-			})
-		}, ...options })
-		.setTimestamp();
+	public embed(
+		options: MessageEmbedOptions,
+		interaction: MessageInteraction
+	): MessageEmbed {
+		return new MessageEmbed({
+			color: 'RANDOM',
+			footer: {
+				text: `${interaction.user.tag}`,
+				iconURL: interaction.user.displayAvatarURL({
+					dynamic: true,
+					format: 'png',
+				}),
+			},
+			...options,
+		}).setTimestamp();
 	}
 
 	public log(options: consolatypes): void {

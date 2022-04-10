@@ -1,9 +1,10 @@
-import type guineabotClient from "../../../musicClient";
+import type guineabotClient from '../../../musicClient';
+import type { Node } from 'erela.js';
 
-export const name = "nodeConnect";
-export const execute = (client: guineabotClient, node: any) => {
-    client.log({
-        level: "info",
-        content: `${node.options.identifier} connected to Lavalink`,
-    });
+export const name = 'nodeConnect';
+export const execute = (client: guineabotClient, node: Node) => {
+	client.log({
+		level: 'info',
+		content: `${node.options.identifier} connected to Lavalink`,
+	});
 };
