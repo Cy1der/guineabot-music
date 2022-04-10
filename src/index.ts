@@ -1,7 +1,10 @@
 import guineabotClient from './musicClient';
 import { Intents } from 'discord.js';
-import { Structure } from 'erela.js';
+import { Manager, Payload, Structure } from 'erela.js';
 import validateNumbers from './functions/validateNumbers';
+import Deezer from 'erela.js-deezer';
+import Spotify from 'erela.js-spotify';
+import config from "../config.json";
 
 Structure.extend(
 	'Queue',
@@ -35,8 +38,54 @@ const client = new guineabotClient({
 		Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
 		Intents.FLAGS.GUILD_PRESENCES,
 		Intents.FLAGS.GUILD_VOICE_STATES,
-		Intents.FLAGS.GUILD_MEMBERS
+		Intents.FLAGS.GUILD_MEMBERS,
 	],
+});
+
+client.manager = new Manager({
+	plugins: [
+		new Spotify({
+			clientID: config.spotify_client_id,
+			clientSecret: config.spotify_client_secret,
+			playlistLimit: 0,
+			albumLimit: 0,
+		}),
+		new Deezer({
+			playlistLimit: 0,
+			albumLimit: 0,
+		}),
+	],
+	clientName: 'Guineabot-Music',
+	nodes: [
+		{
+			host: config.lavalink.server,
+			password: config.lavalink.password,
+			port: config.lavalink.port,
+			secure: config.lavalink.secure,
+			retryDelay: 1000,
+			identifier: 'gm-node-1',
+		},
+		{
+			host: config.lavalink.server,
+			password: config.lavalink.password,
+			port: config.lavalink.port,
+			secure: config.lavalink.secure,
+			retryDelay: 1000,
+			identifier: 'gm-node-2',
+		},
+		{
+			host: config.lavalink.server,
+			password: config.lavalink.password,
+			port: config.lavalink.port,
+			secure: config.lavalink.secure,
+			retryDelay: 1000,
+			identifier: 'gm-node-3',
+		},
+	],
+	send(id: string, payload: Payload) {
+		const guild = client.guilds.cache.get(id);
+		if (guild) guild.shard.send(payload);
+	},
 });
 
 (async () => {

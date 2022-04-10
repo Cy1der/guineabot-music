@@ -1,4 +1,4 @@
-import type { CommandInteraction } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import type guineabotClient from '../../musicClient';
 
 export const name = 'ping';

@@ -3,6 +3,7 @@
 	"spotify_client_id": "",
 	"spotify_client_secret": "",
 	"testing_server_id": "",
+	"owner_id": "",
 	"lavalink": {
 		"server": "",
 		"port": 0,

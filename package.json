@@ -75,12 +75,14 @@
 	"dependencies": {
 		"@prisma/client": "^3.12.0",
 		"consola": "^2.15.3",
+		"cpu-stat": "^2.0.1",
 		"discord.js": "^13.6.0",
 		"erela.js": "^2.3.3",
 		"erela.js-deezer": "^1.0.7",
 		"erela.js-spotify": "^1.2.0",
 		"glob": "^7.2.0",
 		"ms": "^2.1.3",
+		"os": "^0.1.2",
 		"pretty-ms": "^7.0.1"
 	}
 }

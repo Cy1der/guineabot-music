@@ -10,9 +10,7 @@ import { promisify } from 'util';
 import consola from 'consola';
 import glob from 'glob';
 import config from '../config.json';
-import { Manager, Payload } from 'erela.js';
-import Spotify from 'erela.js-spotify';
-import Deezer from 'erela.js-deezer';
+import { Manager } from 'erela.js';
 import type Command from './types/command';
 import type Event from './types/event';
 import type consolatypes from './types/consolatypes';
@@ -34,51 +32,6 @@ export default class guineabotClient extends Client {
 		this.events = new Collection();
 		this.musicEvents = new Collection();
 		this.consola = consola;
-		this.manager = new Manager({
-			plugins: [
-				new Spotify({
-					clientID: config.spotify_client_id,
-					clientSecret: config.spotify_client_secret,
-					playlistLimit: 0,
-					albumLimit: 0,
-				}),
-				new Deezer({
-					playlistLimit: 0,
-					albumLimit: 0,
-				}),
-			],
-			clientName: 'Guineabot-Music',
-			nodes: [
-				{
-					host: config.lavalink.server,
-					password: config.lavalink.password,
-					port: config.lavalink.port,
-					secure: config.lavalink.secure,
-					retryDelay: 1000,
-					identifier: 'gm-node-1',
-				},
-				{
-					host: config.lavalink.server,
-					password: config.lavalink.password,
-					port: config.lavalink.port,
-					secure: config.lavalink.secure,
-					retryDelay: 1000,
-					identifier: 'gm-node-2',
-				},
-				{
-					host: config.lavalink.server,
-					password: config.lavalink.password,
-					port: config.lavalink.port,
-					secure: config.lavalink.secure,
-					retryDelay: 1000,
-					identifier: 'gm-node-3',
-				},
-			],
-			send(id: string, payload: Payload) {
-				const guild = this.guilds.cache.get(id);
-				if (guild) guild.shard.send(payload);
-			},
-		});
 	}
 
 	public async loadCommands(): Promise<number> {
@@ -144,5 +97,9 @@ export default class guineabotClient extends Client {
 
 	public connect(): void {
 		this.login(this.config.bot_token);
+	}
+
+	public isOwner(id: string): boolean {
+		return this.config.owner_id.includes(id);
 	}
 }
