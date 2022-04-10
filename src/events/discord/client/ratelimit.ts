@@ -1,9 +1,9 @@
 import type guineabotClient from "../../../musicClient";
 
-export const name: string = "ratelimit";
-export const execute = (client: guineabotClient, data: any) => {
+export const name = "ratelimit";
+export const execute = (client: guineabotClient, data: string) => {
     client.log({
         level: "warn",
-        content: `Ratelimit exceeded: ${JSON.stringify(data, null, 4)}`,
+        content: `Ratelimit exceeded: ${data}`,
     });
 };

@@ -9,9 +9,8 @@ import {
 import { promisify } from 'util';
 import consola from 'consola';
 import glob from 'glob';
-import ms from 'ms';
 import config from '../config.json';
-import { Manager, Structure } from 'erela.js';
+import { Manager, Payload, Structure } from 'erela.js';
 import Spotify from 'erela.js-spotify';
 import Deezer from 'erela.js-deezer';
 import type Command from "./types/command";
@@ -24,34 +23,34 @@ Structure.extend(
 	'Queue',
 	(Queue) =>
 		class extends Queue {
-			switch(from: number, to: number): void {
-				if (typeof from !== 'number')
+			swap(where: number, to: number): void {
+				if (typeof where !== 'number')
 					throw new TypeError('[BOT] > from must be a number');
 				if (typeof to !== 'number')
 					throw new TypeError('[BOT] > to must be a number');
-				if (from < 1 || to < 1 || from > this.length || to > this.length)
+				if (where < 1 || to < 1 || where > this.length || to > this.length)
 					throw new Error(
 						`[BOT] > from/to must be between 1 and ${this.length}`
 					);
-				const fromPosition = this[from - 1];
+				const fromPosition = this[where - 1];
 				const toPosition = this[to - 1];
-				this[from - 1] = toPosition;
+				this[where - 1] = toPosition;
 				this[to - 1] = fromPosition;
 			}
-			move(from: number, to: number): void {
-				if (typeof from !== 'number')
+			move(where: number, to: number): void {
+				if (typeof where !== 'number')
 					throw new TypeError('[BOT] > from must be a number');
 				if (typeof to !== 'number')
 					throw new TypeError('[BOT] > to must be a number');
-				if (from < 1 || to < 1 || from > this.length || to > this.length)
+				if (where < 1 || to < 1 || where > this.length || to > this.length)
 					throw new Error(
 						`[BOT] > from/to must be between 1 and ${this.length}`
 					);
-				const fromPosition = this[from - 1];
+				const fromPosition = this[where - 1];
 				const toPosition = this[to - 1];
 				this[to - 1] = fromPosition;
-				this.remove(from - 1);
-				for (let i = to; i < this.length; i++) {
+				this.remove(where - 1);
+				for (let i = to; i < this.length; i += 1) {
 					i === to ? (this[i - 1] = toPosition) : (this[i - 1] = this[i]);
 				}
 				this[to] = toPosition;
@@ -97,7 +96,7 @@ export default class guineabotClient extends Client {
 					identifier: 'Guineabot-Music',
 				},
 			],
-			send(id, payload) {
+			send(id: string, payload: Payload) {
 				const guild = this.guilds.cache.get(id);
 				if (guild) guild.shard.send(payload);
 			},

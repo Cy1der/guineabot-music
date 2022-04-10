@@ -1,6 +1,6 @@
 import type guineabotClient from "../../../musicClient";
 
-export const name: string = "nodeConnect";
+export const name = "nodeConnect";
 export const execute = (client: guineabotClient, node: any) => {
     client.log({
         level: "info",

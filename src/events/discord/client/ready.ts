@@ -2,7 +2,7 @@ import type guineabotClient from "../../../musicClient";
 import ms from "ms";
 import type { PresenceData, ClientPresence, ApplicationCommandManager } from "discord.js";
 
-export const name: string = "ready";
+export const name = "ready";
 export const execute = async (client: guineabotClient) => {
     client.manager.init(client.user.id);
     client.log({

@@ -12,8 +12,8 @@ const client = new guineabotClient({
 });
 
 (async () => {
-	await client.loadCommands();
-	await client.loadEvents();
+	await client.loadCommands().catch((e) => client.log({ level: "fatal", content: e }));
+	await client.loadEvents().catch((e) => client.log({ level: "fatal", content: e }));
 })();
 
 client.connect();
