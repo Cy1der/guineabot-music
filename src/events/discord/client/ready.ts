@@ -1,21 +1,30 @@
 import type guineabotClient from "../../../musicClient";
 import ms from "ms";
-import type { PresenceData, ClientPresence } from "discord.js";
+import type { PresenceData, ClientPresence, ApplicationCommandManager } from "discord.js";
 
-const exportData = {
-    name: 'ready',
-    execute: (client: guineabotClient) => {
-        client.manager.init(client.user.id);
-        client.log({
-            level: "success",
-            content: `Logged in as ${client.user.tag}`,
-        });
-        setPresence(client);
-        setInterval(() => setPresence(client), ms('m'));
+export const name: string = "ready";
+export const execute = async (client: guineabotClient) => {
+    client.manager.init(client.user.id);
+    client.log({
+        level: "success",
+        content: `Logged in as ${client.user.tag}`,
+    });
+    setPresence(client);
+    setInterval(() => setPresence(client), ms('15m'));
+
+    const commands: ApplicationCommandManager = client.application?.commands;
+
+    if (commands) {
+        for (const command of client.commands) {
+            await commands.create({
+                name: command[1].name,
+                description: command[1].description,
+                options: command[1].options,
+            });
+        }
     }
-}
-
-export {exportData};
+    else client.log({level: "warn", content: "No global commands created"});
+};
 
 function setPresence(client: guineabotClient): ClientPresence {
     const servers = client.guilds.cache.size;
@@ -23,7 +32,7 @@ function setPresence(client: guineabotClient): ClientPresence {
         status: "online",
         activities: [
             {
-                name: `for commands in ${servers} servers`,
+                name: `${servers} servers for ${client.commands.size} commands`,
                 type: "LISTENING",
             }
         ]

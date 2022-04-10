@@ -64,7 +64,6 @@ export default class guineabotClient extends Client {
 	public commands: Collection<string, Command>;
 	public events: Collection<string, Event>;
 	public musicEvents: Collection<string, Event>;
-	public aliases: Collection<string, string>;
 	public consola: typeof consola;
 	public manager: Manager;
 
@@ -74,7 +73,6 @@ export default class guineabotClient extends Client {
 		this.commands = new Collection();
 		this.events = new Collection();
 		this.musicEvents = new Collection();
-		this.aliases = new Collection();
 		this.consola = consola;
 		this.manager = new Manager({
 			plugins: [
@@ -107,7 +105,7 @@ export default class guineabotClient extends Client {
 	}
 
 	public async loadCommands(): Promise<void> {
-		const commandFiles = await globPromise(`${__dirname}/commands/**/*.ts`);
+		const commandFiles = await globPromise(`${__dirname}/commands/**/{*.ts,*.js}`);
 
 		this.log({
 			level: 'info',
@@ -117,19 +115,17 @@ export default class guineabotClient extends Client {
 		commandFiles.map((command) => {
 			const file = require(command);
 			this.commands.set(file.name, file);
-			if (file.aliases)
-				file.aliases.map((alias: string) => this.aliases.set(alias, file.name));
-			if (!file.cooldown) file.cooldown = ms('1s');
 			if (!file.ownerOnly) file.ownerOnly = false;
 			if (!file.userPermissions) file.userPermissions = [];
 			if (!file.botPermissions) file.botPermissions = [];
+			if (!file.options) file.options = [];
 		});
 	}
 
 	public async loadEvents(): Promise<void> {
-		const eventFiles = await globPromise(`${__dirname}/events/discord/**/*.ts`);
+		const eventFiles = await globPromise(`${__dirname}/events/discord/**/{*.ts,*.js}`);
 		const musicEventFiles = await globPromise(
-			`${__dirname}/events/music/**/*.ts`
+			`${__dirname}/events/music/**/{*.ts,*.js}`
 		);
 
 		this.log({
@@ -144,18 +140,18 @@ export default class guineabotClient extends Client {
 		eventFiles.map((event) => {
 			const file = require(event);
 			this.events.set(file.name, file);
-			this.on(file.name, file.exportData.execute.bind(null, this));
+			this.on(file.name, file.execute.bind(null, this));
 		});
 		musicEventFiles.map((event) => {
 			const file = require(event);
 			this.musicEvents.set(file.name, file);
-			this.on(file.name, file.exportData.execute.bind(null, this));
+			this.on(file.name, file.execute.bind(null, this));
 		});
 	}
 
 	public embed(options: MessageEmbedOptions, interaction: MessageInteraction): MessageEmbed {
 		return new MessageEmbed({ color: "RANDOM", footer: {
-			text: `${interaction.user.tag} | ${interaction.user.id}`,
+			text: `${interaction.user.tag}`,
 			iconURL: interaction.user.displayAvatarURL({ 
 				dynamic: true,
 				format: 'png',
