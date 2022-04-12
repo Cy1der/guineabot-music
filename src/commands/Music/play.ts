@@ -188,7 +188,7 @@ export const execute = async (
 
 			if (first.toLowerCase() === 'end') {
 				if (!player.queue.current) player.destroy();
-				return interaction.reply({
+				return interaction.followUp({
 					embeds: [
 						client.embed(
 							{
@@ -203,7 +203,7 @@ export const execute = async (
 			const index = Number(first) - 1;
 
 			if (isNaN(index))
-				return interaction.reply({
+				return interaction.followUp({
 					embeds: [
 						client.embed(
 							{
@@ -215,7 +215,7 @@ export const execute = async (
 				});
 
 			if (index < 0 || index > max - 1)
-				return interaction.reply({
+				return interaction.followUp({
 					embeds: [
 						client.embed(
 							{
