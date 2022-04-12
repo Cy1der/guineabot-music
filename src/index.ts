@@ -4,7 +4,7 @@ import { Manager, Payload, Structure } from 'erela.js';
 import validateNumbers from './functions/validateNumbers';
 import Deezer from 'erela.js-deezer';
 import Spotify from 'erela.js-spotify';
-import config from "../config.json";
+import config from '../config.json';
 
 Structure.extend(
 	'Queue',

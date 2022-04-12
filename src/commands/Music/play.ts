@@ -141,7 +141,7 @@ export const execute = async (
 		case 'SEARCH_RESULT':
 			let max = 8,
 				collected: Collection<string, Message<boolean>>,
-				filter = (m: { author: { id: string; }; content: string; }) =>
+				filter = (m: { author: { id: string }; content: string }) =>
 					m.author.id === interaction.user.id && /^(\d+|end)$/i.test(m.content);
 			if (res.tracks.length < max) max = res.tracks.length;
 
@@ -149,7 +149,7 @@ export const execute = async (
 				.slice(0, max)
 				.map((track, index) => `${++index} - ${track.title}`)
 				.join('\n');
-			
+
 			interaction.reply({
 				embeds: [
 					client.embed(
@@ -160,8 +160,8 @@ export const execute = async (
 						},
 						interaction
 					),
-				]
-			})
+				],
+			});
 
 			try {
 				collected = await interaction.channel.awaitMessages({
