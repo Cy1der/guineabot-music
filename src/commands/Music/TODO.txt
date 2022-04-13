@@ -1,5 +1,5 @@
 [X] bass
-[] earrape
+[X] earrape
 [X] move
 [X] remove
 [X] swap
