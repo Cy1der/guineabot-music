@@ -6,21 +6,28 @@ import {
 	Permissions,
 } from 'discord.js';
 import type guineabotClient from '../../musicClient';
+import validateNumbers from '../../functions/validateNumbers';
 
-export const name = 'volume';
-export const description = 'LOUD or quiet :)';
+export const name = 'swap';
+export const description = 'Switch the position of 2 tracks';
 export const botPermissions: PermissionResolvable[] = [
 	Permissions.FLAGS.CONNECT,
 	Permissions.FLAGS.SPEAK,
 ];
 export const options: ApplicationCommandOption[] = [
 	{
-		name: 'volume',
-		description: 'The page number to view',
+		name: 'from',
+		description: 'Song queue position',
 		type: 'INTEGER',
-		required: false,
-		maxValue: 100,
-		minValue: 0,
+		required: true,
+		minValue: 1,
+	},
+	{
+		name: 'to',
+		description: 'Song queue position',
+		type: 'INTEGER',
+		required: true,
+		minValue: 1,
 	},
 ];
 export const execute = async (
@@ -44,7 +51,8 @@ export const execute = async (
 		}
 	}
 
-	const volume = interaction.options.getInteger('volume');
+	const from = interaction.options.getInteger('from');
+	const to = interaction.options.getInteger('to');
 	const player = client.manager.players.get(interaction.guild.id);
 
 	if (!player)
@@ -59,28 +67,27 @@ export const execute = async (
 			],
 		});
 
-	if (!volume)
+	if (from > player.queue.length || to > player.queue.length)
 		return interaction.reply({
 			embeds: [
 				client.embed(
 					{
-						title: `Current volume: ${player.volume}`,
+						title: `Number must be in between 1 and ${player.queue.length}`,
 					},
 					interaction
 				),
 			],
 		});
 
-	if (volume < 1 || volume > 100)
-		return interaction.reply({
-			embeds: [
-				client.embed(
-					{ title: 'Volume must be a number between 1 and 100' },
-					interaction
-				),
-			],
-		});
+	const queue = player.queue;
 
-	player.setVolume(volume);
-	interaction.reply({ content: '👍' });
+	validateNumbers(from, to, queue);
+	const fromPosition = queue[from - 1];
+	const toPosition = queue[to - 1];
+	queue[from - 1] = toPosition;
+	queue[to - 1] = fromPosition;
+
+	return interaction.reply({
+		content: '👍',
+	});
 };

@@ -7,20 +7,19 @@ import {
 } from 'discord.js';
 import type guineabotClient from '../../musicClient';
 
-export const name = 'volume';
-export const description = 'LOUD or quiet :)';
+export const name = 'remove';
+export const description = 'Remove a track from the queue';
 export const botPermissions: PermissionResolvable[] = [
 	Permissions.FLAGS.CONNECT,
 	Permissions.FLAGS.SPEAK,
 ];
 export const options: ApplicationCommandOption[] = [
 	{
-		name: 'volume',
-		description: 'The page number to view',
+		name: 'position',
+		description: 'Song queue position',
 		type: 'INTEGER',
-		required: false,
-		maxValue: 100,
-		minValue: 0,
+		required: true,
+		minValue: 1,
 	},
 ];
 export const execute = async (
@@ -44,7 +43,7 @@ export const execute = async (
 		}
 	}
 
-	const volume = interaction.options.getInteger('volume');
+	const index = interaction.options.getInteger('position');
 	const player = client.manager.players.get(interaction.guild.id);
 
 	if (!player)
@@ -59,28 +58,33 @@ export const execute = async (
 			],
 		});
 
-	if (!volume)
+	if (index > player.queue.length)
 		return interaction.reply({
 			embeds: [
 				client.embed(
 					{
-						title: `Current volume: ${player.volume}`,
+						title: `Number must be in between 1 and ${player.queue.length}`,
 					},
 					interaction
 				),
 			],
 		});
 
-	if (volume < 1 || volume > 100)
-		return interaction.reply({
-			embeds: [
-				client.embed(
-					{ title: 'Volume must be a number between 1 and 100' },
-					interaction
-				),
-			],
-		});
-
-	player.setVolume(volume);
-	interaction.reply({ content: '👍' });
+	const removedTrack = player.queue.remove(index - 1);
+	return interaction.reply({
+		embeds: [
+			client.embed(
+				{
+					title: `Track Removed`,
+					fields: [
+						{
+							name: 'Name',
+							value: `\`\`\`${removedTrack[0].title}\`\`\``,
+						},
+					],
+				},
+				interaction
+			),
+		],
+	});
 };

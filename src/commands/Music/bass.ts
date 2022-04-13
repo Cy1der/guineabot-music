@@ -7,20 +7,36 @@ import {
 } from 'discord.js';
 import type guineabotClient from '../../musicClient';
 
-export const name = 'volume';
-export const description = 'LOUD or quiet :)';
+export const name = 'bass';
+export const description = "Let's get this party STARTED!!!";
 export const botPermissions: PermissionResolvable[] = [
 	Permissions.FLAGS.CONNECT,
 	Permissions.FLAGS.SPEAK,
 ];
 export const options: ApplicationCommandOption[] = [
 	{
-		name: 'volume',
-		description: 'The page number to view',
-		type: 'INTEGER',
-		required: false,
-		maxValue: 100,
-		minValue: 0,
+		name: 'level',
+		description: 'How much bass',
+		type: 'STRING',
+		required: true,
+		choices: [{ name: "Reduced", value: "reduced"},
+			{
+				name: 'None',
+				value: 'none',
+			},
+			{
+				name: 'Low',
+				value: 'low',
+			},
+			{
+				name: 'Medium',
+				value: 'medium',
+			},
+			{
+				name: 'High',
+				value: 'high',
+			},
+		],
 	},
 ];
 export const execute = async (
@@ -44,7 +60,7 @@ export const execute = async (
 		}
 	}
 
-	const volume = interaction.options.getInteger('volume');
+	const level = interaction.options.getString('level');
 	const player = client.manager.players.get(interaction.guild.id);
 
 	if (!player)
@@ -59,28 +75,28 @@ export const execute = async (
 			],
 		});
 
-	if (!volume)
-		return interaction.reply({
-			embeds: [
-				client.embed(
-					{
-						title: `Current volume: ${player.volume}`,
-					},
-					interaction
-				),
-			],
-		});
+	const levels = {
+		'none': 0.0,
+		'low': 0.4,
+		'medium': 0.5,
+		'high': 0.6,
+	};
 
-	if (volume < 1 || volume > 100)
-		return interaction.reply({
-			embeds: [
-				client.embed(
-					{ title: 'Volume must be a number between 1 and 100' },
-					interaction
-				),
-			],
-		});
+	const bands = new Array(3)
+		.fill(null)
+		.map((_, i) => ({ band: i, gain: levels[level] }));
 
-	player.setVolume(volume);
-	interaction.reply({ content: '👍' });
+	player.setEQ(...bands);
+
+	return interaction.reply({
+		embeds: [
+			client.embed(
+				{
+					title: `Bass set to ${level}`,
+					description: "Please wait a few seconds for the bass to adjust.\n⚠️ Some songs will sound bad on high bass! ⚠️",
+				},
+				interaction
+			),
+		],
+	});
 };

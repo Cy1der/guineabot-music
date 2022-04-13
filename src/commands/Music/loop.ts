@@ -47,8 +47,8 @@ export const execute = async (
 			],
 		});
 
-    player.setTrackRepeat(!player.trackRepeat);
-    const state = player.trackRepeat ? "Enabled" : "Disabled";
+	player.setTrackRepeat(!player.trackRepeat);
+	const state = player.trackRepeat ? 'Enabled' : 'Disabled';
 	interaction.reply({
 		content: `🔁 🎵 ${state}`,
 	});

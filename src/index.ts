@@ -1,35 +1,9 @@
 import guineabotClient from './musicClient';
 import { Intents } from 'discord.js';
-import { Manager, Payload, Structure } from 'erela.js';
-import validateNumbers from './functions/validateNumbers';
+import { Manager, Payload } from 'erela.js';
 import Deezer from 'erela.js-deezer';
 import Spotify from 'erela.js-spotify';
 import config from '../config.json';
-
-Structure.extend(
-	'Queue',
-	(Queue) =>
-		class extends Queue {
-			swap(where: number, to: number): void {
-				validateNumbers(where, to, this);
-				const fromPosition = this[where - 1];
-				const toPosition = this[to - 1];
-				this[where - 1] = toPosition;
-				this[to - 1] = fromPosition;
-			}
-			move(where: number, to: number): void {
-				validateNumbers(where, to, this);
-				const fromPosition = this[where - 1];
-				const toPosition = this[to - 1];
-				this[to - 1] = fromPosition;
-				this.remove(where - 1);
-				for (let i = to; i < this.length; i += 1) {
-					i === to ? (this[i - 1] = toPosition) : (this[i - 1] = this[i]);
-				}
-				this[to] = toPosition;
-			}
-		}
-);
 
 const client = new guineabotClient({
 	intents: [

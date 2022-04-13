@@ -9,7 +9,7 @@ export const execute = (
 	newChannel: string
 ) => {
 	const channel = client.channels.cache.get(player.textChannel) as TextChannel;
-	if (!newChannel) {
+	if (newChannel === null) {
 		const embed = new MessageEmbed({
 			title: 'Disconnected from voice, destroying player...',
 		});

@@ -1,8 +1,8 @@
-[] bass
+[X] bass
 [] earrape
-[] move
-[] remove
-[] swap
+[X] move
+[X] remove
+[X] swap
 
 ---
 

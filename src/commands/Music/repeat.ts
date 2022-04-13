@@ -47,8 +47,8 @@ export const execute = async (
 			],
 		});
 
-    player.setQueueRepeat(!player.queueRepeat);
-    const state = player.queueRepeat ? "Enabled" : "Disabled";
+	player.setQueueRepeat(!player.queueRepeat);
+	const state = player.queueRepeat ? 'Enabled' : 'Disabled';
 	interaction.reply({
 		content: `🔁 🎶 ${state}`,
 	});
