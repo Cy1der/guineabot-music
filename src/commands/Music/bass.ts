@@ -19,7 +19,8 @@ export const options: ApplicationCommandOption[] = [
 		description: 'How much bass',
 		type: 'STRING',
 		required: true,
-		choices: [{ name: "Reduced", value: "reduced"},
+		choices: [
+			{ name: 'Reduced', value: 'reduced' },
 			{
 				name: 'None',
 				value: 'none',
@@ -76,10 +77,10 @@ export const execute = async (
 		});
 
 	const levels = {
-		'none': 0.0,
-		'low': 0.4,
-		'medium': 0.5,
-		'high': 0.6,
+		none: 0.0,
+		low: 0.4,
+		medium: 0.5,
+		high: 0.6,
 	};
 
 	const bands = new Array(3)
@@ -93,7 +94,8 @@ export const execute = async (
 			client.embed(
 				{
 					title: `Bass set to ${level}`,
-					description: "Please wait a few seconds for the bass to adjust.\n⚠️ Some songs will sound bad on high bass! ⚠️",
+					description:
+						'Please wait a few seconds for the bass to adjust.\n⚠️ Some songs will sound bad on high bass! ⚠️',
 				},
 				interaction
 			),

@@ -4,6 +4,7 @@
 	"spotify_client_secret": "",
 	"testing_server_id": "",
 	"owner_id": "",
+	"mongouri: "",
 	"lavalink": {
 		"server": "",
 		"port": 0,

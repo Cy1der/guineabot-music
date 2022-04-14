@@ -8,3 +8,4 @@ dist
 *.code-workspace
 config.json
 node_modules
+.env

@@ -4,7 +4,9 @@ import type {
 	PresenceData,
 	ClientPresence,
 	ApplicationCommandManager,
+	ApplicationCommandNonOptions,
 } from 'discord.js';
+import { connect } from 'mongoose';
 
 export const name = 'ready';
 export const execute = async (client: guineabotClient) => {
@@ -21,18 +23,22 @@ export const execute = async (client: guineabotClient) => {
 		client.config.testing_server_id
 	);
 
+	await connect(client.config.mongouri, {
+		keepAlive: true,
+	});
+
 	if (commands) {
 		for (const command of client.commands) {
 			await testingServer.commands.create({
 				name: command[1].name,
 				description: command[1].description,
-				options: command[1].options,
+				options: command[1].options as ApplicationCommandNonOptions[],
 			});
 
 			await commands.create({
 				name: command[1].name,
 				description: command[1].description,
-				options: command[1].options,
+				options: command[1].options as ApplicationCommandNonOptions[],
 			});
 		}
 	} else client.log({ level: 'warn', content: 'No global commands created' });

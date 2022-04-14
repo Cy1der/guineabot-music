@@ -8,7 +8,7 @@ import {
 import type guineabotClient from '../../musicClient';
 
 export const name = 'earrape';
-export const description = "How to kill your ears 101";
+export const description = 'How to kill your ears 101';
 export const botPermissions: PermissionResolvable[] = [
 	Permissions.FLAGS.CONNECT,
 	Permissions.FLAGS.SPEAK,
@@ -67,8 +67,8 @@ export const execute = async (
 		embeds: [
 			client.embed(
 				{
-					title: `Earrape ${bool ? "enabled" : "disabled"}`,
-					description: "Please wait a few seconds for the audio to adjust.",
+					title: `Earrape ${bool ? 'enabled' : 'disabled'}`,
+					description: 'Please wait a few seconds for the audio to adjust.',
 				},
 				interaction
 			),
