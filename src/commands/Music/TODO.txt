@@ -1,9 +1,0 @@
-[X] bass
-[X] earrape
-[X] move
-[X] remove
-[X] swap
-
----
-
-[] playlists

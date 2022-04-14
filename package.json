@@ -79,6 +79,7 @@
 		"erela.js": "^2.3.3",
 		"erela.js-deezer": "^1.0.7",
 		"erela.js-spotify": "^1.2.0",
+		"genius-lyrics": "^4.3.6",
 		"glob": "^7.2.0",
 		"mongoose": "^6.2.11",
 		"ms": "^2.1.3",

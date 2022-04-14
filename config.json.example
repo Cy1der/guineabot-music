@@ -5,6 +5,7 @@
 	"testing_server_id": "",
 	"owner_id": "",
 	"mongouri: "",
+	"genius_key: "",
 	"lavalink": {
 		"server": "",
 		"port": 0,
